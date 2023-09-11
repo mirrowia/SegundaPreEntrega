@@ -26,6 +26,7 @@ router.get("/", async (req, res) => {
     try {
       const result = await productModel.distinct("category");
       categories = result;
+      categories.push("Todas");
     } catch (error) {}
 
     res.render("products", {

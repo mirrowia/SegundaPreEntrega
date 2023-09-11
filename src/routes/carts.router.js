@@ -19,6 +19,23 @@ router.get("/:cid", async (req, res) => {
   } catch (error) {}
 });
 
+//POST Crea o trae el cart de un usuario indicado
+router.post("/", async (req, res) => {
+  const { user } = req.body;
+  try {
+    let cart = await cartModel.findOne({ user: user });
+    if (cart) {
+      res.status(200).json(cart);
+    } else {
+      cart = await cartModel.create({ user: user, products: [{}] });
+      res.status(201).json(cart);
+    }
+  } catch (error) {
+    console.error("Error al crear el carrito:", error);
+    res.status(500).json({ error: "Hubo un error al crear el carrito." });
+  }
+});
+
 //PUT
 router.put("/:cid", async (req, res) => {
   let { name, category, price, stock, image } = req.body;
@@ -54,5 +71,10 @@ router.put("/:cid/products/:pid", async (req, res) => {
 //   console.log(result);
 //   res.send({ result: "success", payload: result });
 // });
+
+//DELETE
+router.delete("/:cid/products/:pid", async (req, res) => {
+  let { cid, pid } = req.params;
+});
 
 module.exports = router;
