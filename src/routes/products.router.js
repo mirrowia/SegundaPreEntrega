@@ -18,7 +18,11 @@ router.get("/", async (req, res) => {
 
     let products = await productModel.paginate(query, options);
 
-    res.send({
+    products.docs.forEach((element) => {
+      console.log(element.name);
+    });
+
+    res.render("products", {
       status: "success",
       payload: products.docs,
       totalPages: products.totalPages,
@@ -28,7 +32,22 @@ router.get("/", async (req, res) => {
       hasPrevPage: products.hasPrevPage,
       hasNextPage: products.hastNextPage,
     });
-  } catch (error) {}
+
+    // res.send({
+    //   status: "success",
+    //   payload: products.docs,
+    //   totalPages: products.totalPages,
+    //   prevPage: products.prevPages,
+    //   nextPage: products.nextPage,
+    //   page: products.page,
+    //   hasPrevPage: products.hasPrevPage,
+    //   hasNextPage: products.hastNextPage,
+    // });
+  } catch (error) {
+    res.render("products", {
+      status: "error",
+    });
+  }
 });
 
 // //POST
