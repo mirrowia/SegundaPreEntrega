@@ -5,7 +5,13 @@ const router = Router();
 //GET
 router.get("/", async (req, res) => {
   try {
-  } catch (error) {}
+    const carts = await cartModel.find();
+    res.json({ status: "success", payload: carts });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ status: "error", message: "Error al obtener los carritos" });
+  }
 });
 
 router.get("/:cid", async (req, res) => {

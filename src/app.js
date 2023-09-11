@@ -7,7 +7,7 @@ var path = require("path");
 const app = express();
 const PORT = 8080;
 
-// Configurar Handlebars como motor de plantillas
+// Configución de Handlebars
 app.engine(
   "handlebars",
   handlebars.engine({
