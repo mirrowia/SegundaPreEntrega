@@ -63,7 +63,7 @@
                         </a>
                     </td>
                     <td>
-                        <button class="btn">
+                        <button class="btn" productId="{{this._doc._id}}">
                             <i class="bi bi-cart-fill"></i>
                         </button>
                     </td>
@@ -103,12 +103,15 @@
     </div>
 
     <script>
+
         document.addEventListener("DOMContentLoaded", function () {
 
             // Obtener elementos necesarios
             const categorySelect = document.getElementById("categorySelect");
             const searchButton = document.getElementById("searchButton");
             const priceHeader = document.getElementById("priceHeader");
+            const cartButtons = document.querySelectorAll('.bi-cart-fill');
+
 
             priceHeader.addEventListener("click", function () {
                 // Obtener el valor actual del query param "sort"
@@ -141,6 +144,38 @@
                     window.location.href = `?query=${selectedCategory}`
                 }
             });
+
+            //Agrega evento a todos los botones
+            cartButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const productId = button.getAttribute('productId');
+                    const cartId = '64ff8b9338cb2c04868f9f54';
+
+                    console.log(productId)
+
+                    fetch(`/api/carts/${cartId}`, {
+                        method: 'PUT',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ productId }),
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                // Maneja la respuesta si es exitosa (por ejemplo, mostrar un mensaje de éxito)
+                                console.log('Producto agregado al carrito con éxito');
+                            } else {
+                                // Maneja la respuesta si hay un error
+                                console.error('Error al agregar el producto al carrito');
+                            }
+                        })
+                        .catch(error => {
+                            // Maneja errores de red u otros errores
+                            console.error('Error de red:', error);
+                        });
+                });
+            });
+
         });
     </script>
 </body>
