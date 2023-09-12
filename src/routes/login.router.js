@@ -8,12 +8,13 @@ router.get("/", (req, res) => {
 
 router.post("/", (req, res) => {
   const { username, password } = req.body;
+  console.log(req.body);
   userModel.findOne({ name: username }),
     (err, user) => {
       if (!err) {
         console.log(user);
       } else {
-        console.log(err);
+        res.render("login");
       }
     };
 });

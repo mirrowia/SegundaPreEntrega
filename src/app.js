@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const productRouter = require("./routes/products.router");
 const cartRouter = require("./routes/carts.router");
+const loginRouter = require("./routes/login.router");
 const handlebars = require("express-handlebars");
 var path = require("path");
 const app = express();
@@ -37,3 +38,4 @@ app.listen(PORT, () => {
 app.use(express.json());
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
+app.use("/api/login", loginRouter);
