@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const { cartModel } = require("../models/cart.model");
 const { productModel } = require("../models/product.model");
+const { userModel } = require("../models/user.model");
 const router = Router();
 
 //GET
@@ -16,34 +17,30 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:cid", async (req, res) => {
+  const id = req.params.cid;
   try {
+    const cart = await cartModel.findById(id);
+    const user = await userModel.findById(cart.user);
+    const promise = cart.products.map(async (product) => {
+      const p = {};
+      console.log(product);
+      const details = await productModel.findById(product.product);
+      return p;
+    });
+    const products = await Promise.all(promise);
+
+    res.render("cart", {
+      status: "success",
+      user: user.name,
+      products,
+    });
   } catch (error) {}
 });
-
-//POST Crea o trae el cart de un usuario indicado
-// router.post("/", async (req, res) => {
-//   const { cart } = req.body;
-//   try {
-//     let cart = await cartModel.findOne({ user: user });
-//     if (cart) {
-//       res.status(200).json(cart);
-//     } else {
-//       cart = await cartModel.create({ user: user, products: [{}] });
-//       res.status(201).json(cart);
-//     }
-//   } catch (error) {
-//     console.error("Error al crear el carrito:", error);
-//     res.status(500).json({ error: "Hubo un error al crear el carrito." });
-//   }
-// });
 
 //PUT
 router.put("/:cid", async (req, res) => {
   const cartId = req.params.cid;
   const productId = req.body.productId;
-
-  console.log(cartId);
-  console.log(productId);
 
   try {
     const product = await productModel.findById(productId);
