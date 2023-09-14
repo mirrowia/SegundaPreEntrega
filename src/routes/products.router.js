@@ -22,6 +22,49 @@ router.get("/", async (req, res) => {
     for (let i = 1; i <= products.totalPages; i++) {
       pageNumbers.push({ number: i, current: i === products.page });
     }
+
+    res.send({
+      status: "success",
+      payload: products.docs,
+      totalPages: products.totalPages,
+      prevPage: products.prevPage,
+      nextPage: products.nextPage,
+      page: products.page,
+      hasPrevPage: products.hasPrevPage,
+      hasNextPage: products.hasNextPage,
+      prevLink: products.hasPrevPage
+        ? `/api/products?page=${products.prevPage}`
+        : null,
+      nextLink: products.hasNextPage
+        ? `/api/products?page=${products.nextPage}`
+        : null,
+    });
+  } catch (error) {
+    res.render("products", {
+      status: "error",
+    });
+  }
+});
+
+router.get("/list", async (req, res) => {
+  let { limit, page, sort, query } = req.query;
+  try {
+    const options = {};
+    options.limit = limit ? limit : 10;
+    if (sort) {
+      sort == 1 || sort == -1
+        ? (options.sort = { price: sort })
+        : res.send({ error: "El valor para ordenar debe ser 1 o -1" });
+    }
+    if (page) options.page = page;
+    query = query ? { category: query } : {};
+
+    let products = await productModel.paginate(query, options);
+
+    const pageNumbers = [];
+    for (let i = 1; i <= products.totalPages; i++) {
+      pageNumbers.push({ number: i, current: i === products.page });
+    }
     let categories;
     try {
       const result = await productModel.distinct("category");
