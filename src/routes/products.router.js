@@ -4,7 +4,7 @@ const router = Router();
 
 //GET
 router.get("/", async (req, res) => {
-  let { limit, page, sort, query } = req.query;
+  let { limit, page, sort, category, stock } = req.query;
   try {
     const options = {};
     options.limit = limit ? limit : 10;
@@ -14,9 +14,15 @@ router.get("/", async (req, res) => {
         : res.send({ error: "El valor para ordenar debe ser 1 o -1" });
     }
     if (page) options.page = page;
-    query = query ? { category: query } : {};
 
-    let products = await productModel.paginate(query, options);
+    let products;
+    if (category) {
+      products = await productModel.paginate({ category: category }, options);
+    } else if (stock != undefined) {
+      products = await productModel.paginate({ stock: { $gt: 0 } }, options);
+    } else {
+      products = await productModel.paginate({}, options);
+    }
 
     const pageNumbers = [];
     for (let i = 1; i <= products.totalPages; i++) {
@@ -84,17 +90,6 @@ router.get("/list", async (req, res) => {
       pageNumbers: pageNumbers,
       categories: categories,
     });
-
-    // res.send({
-    //   status: "success",
-    //   payload: products.docs,
-    //   totalPages: products.totalPages,
-    //   prevPage: products.prevPages,
-    //   nextPage: products.nextPage,
-    //   page: products.page,
-    //   hasPrevPage: products.hasPrevPage,
-    //   hasNextPage: products.hastNextPage,
-    // });
   } catch (error) {
     res.render("products", {
       status: "error",
@@ -129,47 +124,5 @@ router.get("/categories", async (req, res) => {
     });
   }
 });
-
-// //POST
-// router.post("/", async (req, res) => {
-//   let { name, category, price, stock, image } = req.body;
-//   if (!name || !category || !price || !stock || !image)
-//     res.send({ status: "error", error: "Missing parameters" });
-
-//   let result = await productModel.create({
-//     name,
-//     category,
-//     price,
-//     stock,
-//     image,
-//   });
-//   res.send({ result: "success", payload: result });
-// });
-
-// //PUT
-// router.put("/", async (req, res) => {
-//   let { name, category, price, stock, image } = req.body;
-//   if (!name || !category || !price || !stock || !image)
-//     res.send({ status: "error", error: "Missing parameters" });
-
-//   let result = await productModel.updateMany({
-//     name,
-//     category,
-//     price,
-//     stock,
-//     image,
-//   });
-//   res.send({ result: "success", payload: result });
-// });
-
-// //DELETE
-// router.delete("/", async (req, res) => {
-//   let { name } = req.body;
-//   if (!name) res.send({ status: "error", error: "Missing parameters" });
-
-//   let result = await productModel.find({ name: name }).deleteOne();
-//   console.log(result);
-//   res.send({ result: "success", payload: result });
-// });
 
 module.exports = router;
