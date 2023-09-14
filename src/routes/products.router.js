@@ -53,6 +53,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/list", async (req, res) => {
+  console.log("eoo");
   let { limit, page, sort, query } = req.query;
   try {
     const options = {};
