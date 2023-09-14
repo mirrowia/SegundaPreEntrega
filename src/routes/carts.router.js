@@ -105,7 +105,7 @@ router.put("/:cid/products/:pid", async (req, res) => {
     }
     //If cart exist search if the product exist in the cart
     const productIndex = cart.products.findIndex(
-      (product) => product._id.toString() === pid
+      (product) => product.product.toString() === pid
     );
 
     if (productIndex === -1) {
